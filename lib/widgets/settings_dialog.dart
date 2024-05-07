@@ -52,13 +52,13 @@ class _SettingsDialogState extends State<SettingsDialog> {
     return Dialog(
       elevation: 0,
       insetPadding:
-          const EdgeInsets.symmetric(horizontal: 10.0, vertical: 12.0),
+      const EdgeInsets.symmetric(horizontal: 10.0, vertical: 12.0),
       clipBehavior: Clip.none,
       backgroundColor: Colors.transparent,
       child: DialogWrapper(
         child: SizedBox(
           width: 280,
-          height: 280,
+          //height: 280,
           child: Column(
             children: [
               const SizedBox(
@@ -115,46 +115,43 @@ class _SettingsDialogState extends State<SettingsDialog> {
                 width: 260.0,
                 height: 80.0,
               ),
-              Stack(
-                children: [
-                  if(kDebugMode)
-                    GestureDetector(
-                      onTap: () async {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) => AlertDialog(
-                            title: const Text('Вы уверены?'),
-                            content: const Text(
-                                'Будет удалено все прохождение и монеты'),
-                            actions: <Widget>[
-                              TextButton(
-                                onPressed: () =>
-                                    Navigator.pop(context, 'Cancel'),
-                                child: const Text('Отмена'),
-                              ),
-                              TextButton(
-                                onPressed: () async {
-                                  await vm.clear();
-                                  RestartWidget.restartApp(context);
-                                  Navigator.of(context).pop();
-                                },
-                                child: const Text(
-                                  'Удалить',
-                                  style: TextStyle(color: Colors.red),
-                                ),
-                              ),
-                            ],
+
+              if(kDebugMode)
+                GestureDetector(
+                  onTap: () async {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) => AlertDialog(
+                        title: const Text('Вы уверены?'),
+                        content: const Text(
+                            'Будет удалено все прохождение и монеты'),
+                        actions: <Widget>[
+                          TextButton(
+                            onPressed: () =>
+                                Navigator.pop(context, 'Cancel'),
+                            child: const Text('Отмена'),
                           ),
-                        );
-                      },
-                      child: Image.asset('assets/images/green_btn_reset.png'),
-                  ),
-                  Text(
-                    'Version: ${_packageInfo.version}, Build number: ${_packageInfo.buildNumber}',
-                    style: ThemeText.info,
-                  )
-                ],
-              ),
+                          TextButton(
+                            onPressed: () async {
+                              await vm.clear();
+                              RestartWidget.restartApp(context);
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text(
+                              'Удалить',
+                              style: TextStyle(color: Colors.red),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                  child: Image.asset('assets/images/green_btn_reset.png'),
+                ),
+              Text(
+                'Version: ${_packageInfo.version}, Build number: ${_packageInfo.buildNumber}',
+                style: ThemeText.info,
+              )
             ],
           ),
         ),

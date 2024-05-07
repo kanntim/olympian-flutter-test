@@ -51,6 +51,7 @@ flutter:
     - assets/audio/
     - assets/data/data.json
     - assets/html/index.html
+    - assets/animation/Animation.json
 
   fonts:
     - family: AlegreyaSans
