@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:lottie/lottie.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -36,7 +37,9 @@ class AreaScreen extends StatelessWidget {
                   ? 'Открыть выбранное слово. Нельзя открыть последнее слово'
                   : 'Открыть выбранное слово. Выберете ячейку',
             ),
-            const SizedBox(height: 66,),
+            const SizedBox(
+              height: 66,
+            ),
           ],
         ),
         appBar: AppBar(
@@ -91,6 +94,8 @@ class __NestedScrollState extends State<_NestedScroll> {
     ctx.read<GameViewModel>().scrollToWidget();
   }
 
+  get animationSize => itemHeight * 1.7;
+
   @override
   Widget build(BuildContext context) {
     final vm = context.watch<GameViewModel>();
@@ -120,57 +125,87 @@ class __NestedScrollState extends State<_NestedScroll> {
                     final page = (widthOffset / wordWidth).floor();
 
                     var itemCounts = vm.groups[page > 0 ? page : 0].length;
+
                     return Container(
                       height: (itemCounts + 1) * itemHeight,
                       constraints: BoxConstraints(
                         minHeight: MediaQuery.of(context).size.height - 70,
                       ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                      child: Stack(
+                        clipBehavior: Clip.none,
+                        alignment: Alignment.center,
                         children: [
-                          ...group.map((word) {
-                            final key =
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              ...group.map((word) {
+                                final key =
                                 word == vm.scrollableWord ? dataKey : null;
-                            if (key != null) {
-                              vm.scrollKey = key;
-                            }
-                            final showEndLeaf =
-                                (widthOffset / wordWidth).floor() <= index;
-                            final showStartLeaf =
-                                (widthOffset / wordWidth).floor() == index;
-                            return AnimatedBuilder(
-                              animation: _scrollCtrl,
-                              builder: (context, child) {
-                                final page =
-                                    max((widthOffset / wordWidth).floor(), 0);
-                                final position = _recalculateOffset(
-                                  maxItems: groups[page].length,
-                                  depth: word.depth,
-                                );
+                                if (key != null) {
+                                  vm.scrollKey = key;
+                                }
+                                final showEndLeaf =
+                                    (widthOffset / wordWidth).floor() <= index;
+                                final showStartLeaf =
+                                    (widthOffset / wordWidth).floor() == index;
+                                return AnimatedBuilder(
+                                  animation: _scrollCtrl,
+                                  builder: (context, child) {
+                                    final page = max(
+                                        (widthOffset / wordWidth).floor(), 0);
+                                    final position = _recalculateOffset(
+                                      maxItems: groups[page].length,
+                                      depth: word.depth,
+                                    );
 
-                                return AnimatedContainer(
-                                  width: wordWidth,
-                                  height: itemHeight,
-                                  duration: const Duration(milliseconds: 150),
-                                  margin: EdgeInsets.only(
-                                    right: 0,
-                                    top: position,
-                                    bottom: position,
+                                    return AnimatedContainer(
+                                      width: wordWidth,
+                                      height: itemHeight,
+                                      duration:
+                                      const Duration(milliseconds: 150),
+                                      margin: EdgeInsets.only(
+                                        right: 0,
+                                        top: position,
+                                        bottom: position,
+                                      ),
+                                      child: child,
+                                    );
+                                  },
+                                  child: WordItem(
+                                    key: key,
+                                    word: word,
+                                    showEndLeaf: showEndLeaf,
+                                    showStartLeaf: showStartLeaf,
                                   ),
-                                  child: child,
                                 );
-                              },
-                              child: WordItem(
-                                key: key,
-                                word: word,
-                                showEndLeaf: showEndLeaf,
-                                showStartLeaf: showStartLeaf,
+                              }).toList(),
+                              Container(
+                                height: 66,
                               ),
-                            );
-                          }).toList(),
-                          Container(
-                            height: 66,
+                            ],
                           ),
+
+                          /// Adding animation only for first Column of words
+                          if (index == 0 && vm.isNeedFirstWordAnimation)
+                            IgnorePointer(
+                              ignoring: true,
+                              child: SizedBox(
+                                height: (itemCounts + 1) * itemHeight,
+                                width: wordWidth,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Lottie.asset(
+                                        'assets/animation/Animation.json',
+                                        alignment: Alignment.center,
+                                        height: animationSize,
+                                        width: animationSize,
+                                        fit: BoxFit.contain),
+                                  ],
+                                ),
+                              ),
+                            ),
                         ],
                       ),
                     );
@@ -202,7 +237,7 @@ class __NestedScrollState extends State<_NestedScroll> {
               child: AnimatedSmoothIndicator(
                 activeIndex: max(
                     ((_scrollCtrl.hasClients ? _scrollCtrl.offset : 0) /
-                            wordWidth)
+                        wordWidth)
                         .floor(),
                     0),
                 count: groups.length,

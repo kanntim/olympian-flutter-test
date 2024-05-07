@@ -53,6 +53,12 @@ class GameViewModel with ChangeNotifier {
   // bool get showWrongAnswerDialog => wrongAnswerCount >= maxWrongAnswerCount;
   bool get showWrongAnswerDialog => false;
 
+  // Check that at least one of the words is "correct"
+  bool get isNeedFirstWordAnimation =>
+      focusedWord == null &&
+          getLevelIndex()==1 &&
+          !activeLevel.data.any((e) => e.state == WordState.correct);
+
   GameViewModel() {
     _init();
   }
@@ -90,7 +96,7 @@ class GameViewModel with ChangeNotifier {
 
       activeLevel.state = LevelState.success;
       final lastCompleteLevel =
-          _levels.indexWhere((e) => e.id == activeLevel.id);
+      _levels.indexWhere((e) => e.id == activeLevel.id);
 
       final nextOpenLevel = lastCompleteLevel + 1;
       if (nextOpenLevel < _levels.length &&
@@ -110,7 +116,7 @@ class GameViewModel with ChangeNotifier {
 
   getLastActiveIndex() {
     return _levels.indexWhere((l) =>
-        (l.state == LevelState.available || l.state == LevelState.started));
+    (l.state == LevelState.available || l.state == LevelState.started));
   }
 
   // Добавляем активный уровень
@@ -159,7 +165,7 @@ class GameViewModel with ChangeNotifier {
         .toList();
 
     final actIndex =
-        isEven ? (wordIndex / 2).round() - 1 : (wordIndex / 2).round();
+    isEven ? (wordIndex / 2).round() - 1 : (wordIndex / 2).round();
     if (isEven) {
       nextDepthWords[actIndex].showEndLeaf = true;
     } else if (nextDepthWords.asMap().containsKey(actIndex)) {
@@ -209,7 +215,10 @@ class GameViewModel with ChangeNotifier {
         }
 
         // Монеты за прохождение всех слов в столбце
-        final isRowComplete = depthWords.where((element) => element.state == WordState.correct).length == depthWords.length;
+        final isRowComplete = depthWords
+            .where((element) => element.state == WordState.correct)
+            .length ==
+            depthWords.length;
 
         if (isRowComplete) {
           coins += _conf.appConfig.entireColumnsCoins;
@@ -269,12 +278,13 @@ class GameViewModel with ChangeNotifier {
     return isCorrect;
   }
 
-  showBanner({ required BuildContext context }) {
+  showBanner({required BuildContext context}) {
     // Показ баннера
     if (getLevelIndex() > 1) {
       Navigator.of(context).push(
         PageRouteBuilder(
-          pageBuilder: (context, animation1, animation2) => const AdvTimeScreen(),
+          pageBuilder: (context, animation1, animation2) =>
+          const AdvTimeScreen(),
           transitionDuration: Duration.zero,
           reverseTransitionDuration: Duration.zero,
         ),
@@ -325,7 +335,8 @@ class GameViewModel with ChangeNotifier {
     }
     word.state = focus ? WordState.input : WordState.idle;
     try {
-      focusedWord = activeLevel.data.firstWhere((w) => w.state == WordState.input);
+      focusedWord =
+          activeLevel.data.firstWhere((w) => w.state == WordState.input);
     } catch (e) {
       focusedWord = null;
     }
@@ -377,7 +388,7 @@ class GameViewModel with ChangeNotifier {
           title: 'Недостаточно монет',
         ),
       ).then(
-        (value) => _analytics.fireEventWithMap(
+            (value) => _analytics.fireEventWithMap(
           AnalyticsEvents.onMonetizationWindowClose,
           {
             'level_id': activeLevel.id,
@@ -397,13 +408,13 @@ class GameViewModel with ChangeNotifier {
     final random = Random();
     final words = groups
         .firstWhere((group) =>
-            group.firstWhereOrNull((w) =>
-                (w.state == WordState.idle || w.state == WordState.input)) !=
-            null)
+    group.firstWhereOrNull((w) =>
+    (w.state == WordState.idle || w.state == WordState.input)) !=
+        null)
         .toList();
 
     final idleWords =
-        words.where((word) => word.state != WordState.correct).toList();
+    words.where((word) => word.state != WordState.correct).toList();
 
     final max = idleWords.length;
     final randWord = idleWords[random.nextInt(max)];
@@ -476,7 +487,7 @@ class GameViewModel with ChangeNotifier {
           title: 'Недостаточно монет',
         ),
       ).then(
-        (value) => _analytics
+            (value) => _analytics
             .fireEventWithMap(AnalyticsEvents.onMonetizationWindowClose, {
           'level_id': activeLevel.id,
           'level': getLevelIndex(),
@@ -582,7 +593,7 @@ class GameViewModel with ChangeNotifier {
 
   getNextLevel(BuildContext context) {
     var index =
-        _levels.indexWhere((element) => element.state != LevelState.success);
+    _levels.indexWhere((element) => element.state != LevelState.success);
     if (index == -1) {
       showDialog(
         context: context,
@@ -644,9 +655,10 @@ class GameViewModel with ChangeNotifier {
   }
 
   _cacheImages() {
-    for (final lvl in _levels.where((element) => element.state == LevelState.available)) {
+    for (final lvl
+    in _levels.where((element) => element.state == LevelState.available)) {
       final wordsWithImage =
-          lvl.data.where((element) => element.image.isNotEmpty);
+      lvl.data.where((element) => element.image.isNotEmpty);
       for (final word in wordsWithImage) {
         DefaultCacheManager().downloadFile(word.image);
       }
@@ -655,9 +667,9 @@ class GameViewModel with ChangeNotifier {
 
   isLastWord() {
     return activeLevel.data
-            .where((elm) =>
-                elm.state == WordState.idle || elm.state == WordState.input)
-            .length ==
+        .where((elm) =>
+    elm.state == WordState.idle || elm.state == WordState.input)
+        .length ==
         1;
   }
 

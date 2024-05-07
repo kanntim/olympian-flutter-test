@@ -28,6 +28,9 @@ class SettingsViewModel with ChangeNotifier {
 
   clear() async {
     await _db.clear();
+
+    // for normal restarting app
+    await _db.initDb();
     notifyListeners();
   }
 
