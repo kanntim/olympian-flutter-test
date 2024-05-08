@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:lottie/lottie.dart';
+import 'package:olympian/widgets/first_word_animation.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -186,25 +187,11 @@ class __NestedScrollState extends State<_NestedScroll> {
                           ),
 
                           /// Adding animation only for first Column of words
-                          if (index == 0 && vm.isNeedFirstWordAnimation)
-                            IgnorePointer(
-                              ignoring: true,
-                              child: SizedBox(
-                                height: (itemCounts + 1) * itemHeight,
-                                width: wordWidth,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Lottie.asset(
-                                        'assets/animation/Animation.json',
-                                        alignment: Alignment.center,
-                                        height: animationSize,
-                                        width: animationSize,
-                                        fit: BoxFit.contain),
-                                  ],
-                                ),
-                              ),
+                          if (index == 0)
+                            FirstWordAnimation(
+                              fieldHeight: (itemCounts + 1) * itemHeight,
+                              fieldWidth: wordWidth,
+                              animationSize: animationSize,
                             ),
                         ],
                       ),
