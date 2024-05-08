@@ -1,5 +1,4 @@
 import 'dart:math';
-import 'package:lottie/lottie.dart';
 import 'package:olympian/widgets/first_word_animation.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:flutter/material.dart';
